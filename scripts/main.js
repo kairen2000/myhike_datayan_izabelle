@@ -44,3 +44,70 @@ function insertName() {
     });
 }
 insertName();
+
+function writeHikes() {
+    //define a variable for the collection you want to create in Firestore to populate data
+    var hikesRef = db.collection("hikes");
+
+    hikesRef.add({
+        code:"hikesquarry",
+        name: "Quarry Rock Hike",
+        city: "North Vancouver",
+        province: "BC",
+        level: "easy",
+        length: "4 km",
+        details: "Izabelle thinks this is a relaxing hike"
+    });
+    hikesRef.add({
+        code:"hikescrunch",
+        name: "Coquitlam Crunch",
+        city: "Coquitlam",
+        province: "BC",
+        level: "moderate",
+        length: "6.3 km",
+        details: "Izabelle goes here regularly"
+    });
+    hikesRef.add({
+        code:"hikes",
+        name: "Garibaldi Lake Hike",
+        city: "Squamish",
+        province: "BC",
+        level: "hard",
+        length: "18 km",
+        details: "Izabelle loves the view here"
+    });
+}
+
+function displayCards(collection) {
+    let cardTemplate = document.getElementById("hikeCardTemplate");
+
+    db.collection(collection).get()
+        .then(snap => {
+            var i = 1;
+            snap.forEach(doc => { //iterate thru each doc
+                var title = doc.data().name;   // get value of the "name" key
+                var details = doc.data().details;   // get value of the "details" key
+                let newcard = cardTemplate.content.cloneNode(true);
+                var code = doc.data().code;
+
+                //update title and text and image
+                newcard.querySelector('.card-title').innerHTML = title;
+                newcard.querySelector('.card-text').innerHTML = details;
+                newcard.querySelector('.card-image').src = "./images/" + code + ".jpg"; //hikes.jpg
+
+                //give unique ids to all elements for future use
+                newcard.querySelector('.card-title').setAttribute("id", "hiketitle" + i);
+                newcard.querySelector('.card-text').setAttribute("id", "hiketext" + i);
+                newcard.querySelector('.card-image').setAttribute("id", "hikeimage" + i);
+
+                //attach to gallery
+                document.getElementById(collection + "-go-here").appendChild(newcard);
+                i++;
+
+                document.getElementById(collection + "-go-here").appendChild(newcard);
+                i++;
+            })
+        })
+}
+
+displayCards("hikes");
